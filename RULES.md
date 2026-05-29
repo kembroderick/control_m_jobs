@@ -26,19 +26,17 @@ Control-M Automation API JSON. Top-level keys are folder names (from `workspace`
 ```json
 {
   "FolderName": {
-    "Type": "SimpleFolder",
-    "Jobs": [
-      {
-        "Type": "Job:Command",
-        "Name": "JobName",
-        "Command": "",
+    "Type": "Folder",
+    "Jobs": {
+      "JobName": {
+        "Type": "Job:Dummy",
         "DependsOnJobs": {
           "Scope": "Global",
-          "Jobs": [{ "Name": "UpstreamJob" }]
+          "Jobs": [{ "JobName": "UpstreamJob" }]
         },
-        "WaitForFolders": [{ "Name": "UpstreamFolder" }]
+        "WaitForFolders": [{ "FolderName": "UpstreamFolder" }]
       }
-    ]
+    }
   }
 }
 ```

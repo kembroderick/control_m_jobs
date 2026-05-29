@@ -4,28 +4,26 @@ from .parser import JobDefinition
 
 
 def _build_folder(folder_name: str, jobs: List[JobDefinition]) -> dict:
-    job_entries = []
+    job_entries = {}
 
     for job in jobs:
         entry = {
-            "Type": "Job:Command",
-            "Name": job.job_name,
-            "Command": "",
+            "Type": "Job:Dummy",
         }
 
         if job.job_deps:
             entry["DependsOnJobs"] = {
                 "Scope": "Global",
-                "Jobs": [{"Name": dep} for dep in job.job_deps],
+                "Jobs": [{"JobName": dep} for dep in job.job_deps],
             }
 
         if job.folder_deps:
-            entry["WaitForFolders"] = [{"Name": dep} for dep in job.folder_deps]
+            entry["WaitForFolders"] = [{"FolderName": dep} for dep in job.folder_deps]
 
-        job_entries.append(entry)
+        job_entries[job.job_name] = entry
 
     return {
-        "Type": "SimpleFolder",
+        "Type": "Folder",
         "Jobs": job_entries,
     }
 

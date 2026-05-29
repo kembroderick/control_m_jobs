@@ -1,103 +1,87 @@
 {
   "ETL_Daily": {
-    "Type": "SimpleFolder",
-    "Jobs": [
-      {
-        "Type": "Job:Command",
-        "Name": "Extract_Sales",
-        "Command": ""
+    "Type": "Folder",
+    "Jobs": {
+      "Extract_Sales": {
+        "Type": "Job:Dummy"
       },
-      {
-        "Type": "Job:Command",
-        "Name": "Extract_Inventory",
-        "Command": ""
+      "Extract_Inventory": {
+        "Type": "Job:Dummy"
       },
-      {
-        "Type": "Job:Command",
-        "Name": "Transform_Sales",
-        "Command": "",
+      "Transform_Sales": {
+        "Type": "Job:Dummy",
         "DependsOnJobs": {
           "Scope": "Global",
           "Jobs": [
             {
-              "Name": "Extract_Sales"
+              "JobName": "Extract_Sales"
             }
           ]
         }
       },
-      {
-        "Type": "Job:Command",
-        "Name": "Transform_Inventory",
-        "Command": "",
+      "Transform_Inventory": {
+        "Type": "Job:Dummy",
         "DependsOnJobs": {
           "Scope": "Global",
           "Jobs": [
             {
-              "Name": "Extract_Inventory"
+              "JobName": "Extract_Inventory"
             }
           ]
         }
       },
-      {
-        "Type": "Job:Command",
-        "Name": "Load_Warehouse",
-        "Command": "",
+      "Load_Warehouse": {
+        "Type": "Job:Dummy",
         "DependsOnJobs": {
           "Scope": "Global",
           "Jobs": [
             {
-              "Name": "Transform_Sales"
+              "JobName": "Transform_Sales"
             },
             {
-              "Name": "Transform_Inventory"
+              "JobName": "Transform_Inventory"
             }
           ]
         }
       }
-    ]
+    }
   },
   "Reporting": {
-    "Type": "SimpleFolder",
-    "Jobs": [
-      {
-        "Type": "Job:Command",
-        "Name": "Build_Dashboard",
-        "Command": "",
+    "Type": "Folder",
+    "Jobs": {
+      "Build_Dashboard": {
+        "Type": "Job:Dummy",
         "WaitForFolders": [
           {
-            "Name": "ETL_Daily"
+            "FolderName": "ETL_Daily"
           }
         ]
       },
-      {
-        "Type": "Job:Command",
-        "Name": "Send_Report",
-        "Command": "",
+      "Send_Report": {
+        "Type": "Job:Dummy",
         "DependsOnJobs": {
           "Scope": "Global",
           "Jobs": [
             {
-              "Name": "Build_Dashboard"
+              "JobName": "Build_Dashboard"
             }
           ]
         }
       },
-      {
-        "Type": "Job:Command",
-        "Name": "Archive_Logs",
-        "Command": "",
+      "Archive_Logs": {
+        "Type": "Job:Dummy",
         "DependsOnJobs": {
           "Scope": "Global",
           "Jobs": [
             {
-              "Name": "Build_Dashboard"
+              "JobName": "Build_Dashboard"
             },
             {
-              "Name": "Send_Report"
+              "JobName": "Send_Report"
             }
           ]
         }
       }
-    ]
+    }
   }
 }
