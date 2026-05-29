@@ -52,7 +52,10 @@
       "Build_Dashboard-WaitForEvents": {
         "Type": "WaitForEvents",
         "Events": [
-          "ETL_Daily_COMPLETE"
+          {
+            "Event": "ETL_Daily_COMPLETE",
+            "Date": "ODAT"
+          }
         ]
       }
     },

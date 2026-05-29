@@ -12,7 +12,7 @@ def _build_folder(folder_name: str, jobs: List[JobDefinition]) -> dict:
         if job.folder_deps:
             entry[f"{job.job_name}-WaitForEvents"] = {
                 "Type": "WaitForEvents",
-                "Events": [f"{dep}_COMPLETE" for dep in job.folder_deps],
+                "Events": [{"Event": f"{dep}_COMPLETE", "Date": "ODAT"} for dep in job.folder_deps],
             }
 
         folder[job.job_name] = entry
