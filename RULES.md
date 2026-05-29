@@ -21,30 +21,34 @@ Dependencies in the `dependency` column are **prerequisites** — they must comp
 
 ## Output Format
 
-Control-M Automation API JSON. Top-level keys are folder names (from `workspace`).
+Control-M Automation API JSON (flat top-level dict). Top-level keys are folder names (from `workspace`).
 
 ```json
 {
   "FolderName": {
     "Type": "Folder",
-    "Jobs": {
-      "JobName": {
-        "Type": "Job:Dummy",
-        "DependsOnJobs": {
-          "Scope": "Global",
-          "Jobs": [{ "JobName": "UpstreamJob" }]
-        },
-        "WaitForFolders": [{ "FolderName": "UpstreamFolder" }]
+    "JobA": { "Type": "Job:Dummy" },
+    "JobB": {
+      "Type": "Job:Dummy",
+      "JobB-WaitForEvents": {
+        "Type": "WaitForEvents",
+        "Events": ["OtherFolder_COMPLETE"]
       }
+    },
+    "JobA-TO-JobB": {
+      "Type": "Flow",
+      "Sequence": ["JobA", "JobB"]
     }
   }
 }
 ```
 
-- `Jobs` is an **array** (not an object)
-- Each job carries a `"Name"` field
-- `DependsOnJobs` is present only if the job has job-level prerequisites
-- `WaitForFolders` is present only if the job has folder-level prerequisites
+- Top level is a **flat dict** — no `{"Folders": [...]}` wrapper
+- Jobs are **dict keys** inside the folder — no `"Name"` field, no array
+- Intra-folder job dependencies use `Flow` objects named `"Upstream-TO-Downstream"`
+- Each `Flow` has `"Sequence": ["upstream_job", "downstream_job"]` — one edge per Flow
+- Fan-in (multiple prerequisites) is expressed as multiple Flow objects converging on the same downstream job
+- Cross-folder (folder-level) dependencies use a `WaitForEvents` sub-object on the waiting job, with event name `{FolderName}_COMPLETE`
 
 ## Project Structure
 

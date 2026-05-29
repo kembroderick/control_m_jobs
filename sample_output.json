@@ -1,87 +1,87 @@
 {
   "ETL_Daily": {
     "Type": "Folder",
-    "Jobs": {
-      "Extract_Sales": {
-        "Type": "Job:Dummy"
-      },
-      "Extract_Inventory": {
-        "Type": "Job:Dummy"
-      },
-      "Transform_Sales": {
-        "Type": "Job:Dummy",
-        "DependsOnJobs": {
-          "Scope": "Global",
-          "Jobs": [
-            {
-              "JobName": "Extract_Sales"
-            }
-          ]
-        }
-      },
-      "Transform_Inventory": {
-        "Type": "Job:Dummy",
-        "DependsOnJobs": {
-          "Scope": "Global",
-          "Jobs": [
-            {
-              "JobName": "Extract_Inventory"
-            }
-          ]
-        }
-      },
-      "Load_Warehouse": {
-        "Type": "Job:Dummy",
-        "DependsOnJobs": {
-          "Scope": "Global",
-          "Jobs": [
-            {
-              "JobName": "Transform_Sales"
-            },
-            {
-              "JobName": "Transform_Inventory"
-            }
-          ]
-        }
-      }
+    "Extract_Sales": {
+      "Type": "Job:Dummy"
+    },
+    "Extract_Inventory": {
+      "Type": "Job:Dummy"
+    },
+    "Transform_Sales": {
+      "Type": "Job:Dummy"
+    },
+    "Transform_Inventory": {
+      "Type": "Job:Dummy"
+    },
+    "Load_Warehouse": {
+      "Type": "Job:Dummy"
+    },
+    "Extract_Sales-TO-Transform_Sales": {
+      "Type": "Flow",
+      "Sequence": [
+        "Extract_Sales",
+        "Transform_Sales"
+      ]
+    },
+    "Extract_Inventory-TO-Transform_Inventory": {
+      "Type": "Flow",
+      "Sequence": [
+        "Extract_Inventory",
+        "Transform_Inventory"
+      ]
+    },
+    "Transform_Sales-TO-Load_Warehouse": {
+      "Type": "Flow",
+      "Sequence": [
+        "Transform_Sales",
+        "Load_Warehouse"
+      ]
+    },
+    "Transform_Inventory-TO-Load_Warehouse": {
+      "Type": "Flow",
+      "Sequence": [
+        "Transform_Inventory",
+        "Load_Warehouse"
+      ]
     }
   },
   "Reporting": {
     "Type": "Folder",
-    "Jobs": {
-      "Build_Dashboard": {
-        "Type": "Job:Dummy",
-        "WaitForFolders": [
-          {
-            "FolderName": "ETL_Daily"
-          }
+    "Build_Dashboard": {
+      "Type": "Job:Dummy",
+      "Build_Dashboard-WaitForEvents": {
+        "Type": "WaitForEvents",
+        "Events": [
+          "ETL_Daily_COMPLETE"
         ]
-      },
-      "Send_Report": {
-        "Type": "Job:Dummy",
-        "DependsOnJobs": {
-          "Scope": "Global",
-          "Jobs": [
-            {
-              "JobName": "Build_Dashboard"
-            }
-          ]
-        }
-      },
-      "Archive_Logs": {
-        "Type": "Job:Dummy",
-        "DependsOnJobs": {
-          "Scope": "Global",
-          "Jobs": [
-            {
-              "JobName": "Build_Dashboard"
-            },
-            {
-              "JobName": "Send_Report"
-            }
-          ]
-        }
       }
+    },
+    "Send_Report": {
+      "Type": "Job:Dummy"
+    },
+    "Archive_Logs": {
+      "Type": "Job:Dummy"
+    },
+    "Build_Dashboard-TO-Send_Report": {
+      "Type": "Flow",
+      "Sequence": [
+        "Build_Dashboard",
+        "Send_Report"
+      ]
+    },
+    "Build_Dashboard-TO-Archive_Logs": {
+      "Type": "Flow",
+      "Sequence": [
+        "Build_Dashboard",
+        "Archive_Logs"
+      ]
+    },
+    "Send_Report-TO-Archive_Logs": {
+      "Type": "Flow",
+      "Sequence": [
+        "Send_Report",
+        "Archive_Logs"
+      ]
     }
   }
 }

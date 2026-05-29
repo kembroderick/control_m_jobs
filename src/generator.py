@@ -4,28 +4,28 @@ from .parser import JobDefinition
 
 
 def _build_folder(folder_name: str, jobs: List[JobDefinition]) -> dict:
-    job_entries = {}
+    folder: dict = {"Type": "Folder"}
 
     for job in jobs:
-        entry = {
-            "Type": "Job:Dummy",
-        }
-
-        if job.job_deps:
-            entry["DependsOnJobs"] = {
-                "Scope": "Global",
-                "Jobs": [{"JobName": dep} for dep in job.job_deps],
-            }
+        entry: dict = {"Type": "Job:Dummy"}
 
         if job.folder_deps:
-            entry["WaitForFolders"] = [{"FolderName": dep} for dep in job.folder_deps]
+            entry[f"{job.job_name}-WaitForEvents"] = {
+                "Type": "WaitForEvents",
+                "Events": [f"{dep}_COMPLETE" for dep in job.folder_deps],
+            }
 
-        job_entries[job.job_name] = entry
+        folder[job.job_name] = entry
 
-    return {
-        "Type": "Folder",
-        "Jobs": job_entries,
-    }
+    for job in jobs:
+        for dep in job.job_deps:
+            flow_key = f"{dep}-TO-{job.job_name}"
+            folder[flow_key] = {
+                "Type": "Flow",
+                "Sequence": [dep, job.job_name],
+            }
+
+    return folder
 
 
 def generate_json(jobs: List[JobDefinition]) -> str:
