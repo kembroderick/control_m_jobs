@@ -1,0 +1,103 @@
+{
+  "ETL_Daily": {
+    "Type": "SimpleFolder",
+    "Jobs": [
+      {
+        "Type": "Job:Command",
+        "Name": "Extract_Sales",
+        "Command": ""
+      },
+      {
+        "Type": "Job:Command",
+        "Name": "Extract_Inventory",
+        "Command": ""
+      },
+      {
+        "Type": "Job:Command",
+        "Name": "Transform_Sales",
+        "Command": "",
+        "DependsOnJobs": {
+          "Scope": "Global",
+          "Jobs": [
+            {
+              "Name": "Extract_Sales"
+            }
+          ]
+        }
+      },
+      {
+        "Type": "Job:Command",
+        "Name": "Transform_Inventory",
+        "Command": "",
+        "DependsOnJobs": {
+          "Scope": "Global",
+          "Jobs": [
+            {
+              "Name": "Extract_Inventory"
+            }
+          ]
+        }
+      },
+      {
+        "Type": "Job:Command",
+        "Name": "Load_Warehouse",
+        "Command": "",
+        "DependsOnJobs": {
+          "Scope": "Global",
+          "Jobs": [
+            {
+              "Name": "Transform_Sales"
+            },
+            {
+              "Name": "Transform_Inventory"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "Reporting": {
+    "Type": "SimpleFolder",
+    "Jobs": [
+      {
+        "Type": "Job:Command",
+        "Name": "Build_Dashboard",
+        "Command": "",
+        "WaitForFolders": [
+          {
+            "Name": "ETL_Daily"
+          }
+        ]
+      },
+      {
+        "Type": "Job:Command",
+        "Name": "Send_Report",
+        "Command": "",
+        "DependsOnJobs": {
+          "Scope": "Global",
+          "Jobs": [
+            {
+              "Name": "Build_Dashboard"
+            }
+          ]
+        }
+      },
+      {
+        "Type": "Job:Command",
+        "Name": "Archive_Logs",
+        "Command": "",
+        "DependsOnJobs": {
+          "Scope": "Global",
+          "Jobs": [
+            {
+              "Name": "Build_Dashboard"
+            },
+            {
+              "Name": "Send_Report"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
